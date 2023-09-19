@@ -1,9 +1,9 @@
-import { Box, Button, Tab, Tabs, TextField, Typography } from "@mui/material";
+import { Box, Button, FormControl, Input, InputLabel, OutlinedInput, Tab, Tabs, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
-    console.log(children)
+  
     return (
       <div
         role="tabpanel"
@@ -30,43 +30,55 @@ function CustomTabPanel(props) {
   
   export default function AccessTab() {
     const [value, setValue] = useState(3);
-  
+    const [login, setLogin] = useState({email:'', senha:''})
+    const [register, setRegister] = useState({name:'', email:'', password:''})
     const handleChange = (event, newValue) => {
       setValue(newValue);
     };
+
+    const onSubmit = async (event) => {
+      event.preventDefault()
+      console.log('submit', login, register)
+
+      fetch('http://localhost:3000/user',{
+        method: 'POST',
+        headers:{
+          'Content-Type':'application/json',
+        },
+        body:JSON.stringify(register)
+      }).then((resp) => resp.json())
+        .then((data) => {
+          console.log(data)
+        }).catch((err) => console.log('deu um erro', err))
+    }
   
     return (
-      <Box sx={{ width: '100%' }}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      <Box sx={{ width: '100%' , backgroundColor: 'white', inlineSize: '300px', borderRadius: '5px'}} mt={20}>
+        <Box sx={{ borderBottom: 0, borderColor: 'divider', marginLeft: '20px'}}>
           <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
             <Tab label="Entrar" {...a11yProps(0)} />
             <Tab label="Cadastre-se" {...a11yProps(1)} />
           </Tabs>
         </Box>
         <CustomTabPanel value={value} index={0}>
-          <Box display='flex' mt={20} alignItems='center'>
-            <TextField id="email" label="Email" variant="outlined"></TextField>
-          </Box>
-          <Box mt={2}>
-            <TextField id="senha" label="Senha" variant="outlined"></TextField>
-          </Box>
-          <Box mt={2}>
-            <Button variant='contained' size='medium'>Iniciar</Button>
-          </Box>
+          <form onSubmit={onSubmit}>
+            <TextField id="email" label="Email" variant="outlined" onInput={e => setLogin({...login, email: e.target.value})}></TextField>
+            <TextField id="senha" label="Senha" variant="outlined" onInput={e => setLogin({...login, senha: e.target.value})}></TextField>
+            <Box mt={2}>
+              <Button variant='contained' size='medium' type="submit">Iniciar</Button>
+            </Box>
+          </form>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          <Box display='flex' mt={20} alignItems='center'>
-            <TextField id="nome" label="Nome Completo" variant="outlined"></TextField>
-          </Box>
-          <Box mt={2}>
-            <TextField id="email" label="Email" variant="outlined"></TextField>
-          </Box>
-          <Box mt={2}>
-            <TextField id="senha" label="Senha" variant="outlined"></TextField>
-          </Box>
-          <Box mt={2}>
-            <Button variant='contained' size='medium'>Cadastrar</Button>
-          </Box>
+          <form onSubmit={onSubmit}>
+            <TextField id="email" label="Email" variant="outlined" onInput={e => setRegister({...register, email: e.target.value})}></TextField>
+            <TextField id="name" label="Nome" variant="outlined" onInput={e => setRegister({...register, name: e.target.value})}></TextField>
+            <TextField id="password" label="Senha" variant="outlined" onInput={e => setRegister({...register, password: e.target.value})}></TextField>
+            
+            <Box mt={2}>
+              <Button variant='contained' size='medium' type="submit">Cadastrar</Button>
+            </Box>
+          </form>
         </CustomTabPanel>
       </Box>
     );
