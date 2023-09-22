@@ -1,6 +1,7 @@
 const Home = () =>{
     return(
-        <h1>Pagina principal</h1>
+        <h1>Pagina principal</h1>,
+        <h2>Voce esta logado</h2>
     )
 }
 
