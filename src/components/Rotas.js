@@ -14,7 +14,6 @@ const Rotas = () => {
                            element={
                             auth ? <Home/> : <Navigate to='/login'/>
                            }/>
-
                 </Routes>
             </Router>
         )
