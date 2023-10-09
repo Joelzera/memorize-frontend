@@ -1,5 +1,6 @@
 import { Box, Button, FormControl, Input, InputLabel, OutlinedInput, Tab, Tabs, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom'
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -52,6 +53,8 @@ function CustomTabPanel(props) {
         }).catch((err) => console.log('deu um erro', err))
       
     }
+    const redirect = useNavigate()
+
     const onSubmitLogin = async (event) =>{
       event.preventDefault()
       console.log('login', login)
@@ -64,10 +67,12 @@ function CustomTabPanel(props) {
         body:JSON.stringify(login)
       }).then((resp) => resp.json())
         .then((data) => {
+          localStorage.setItem("token", JSON.stringify(data.token))
+          const userToken = localStorage.getItem("token")
+          redirect(userToken ? '/' : '/login')
           console.log('teste', data)
       }).catch((err) => console.log('ouve um erro', err))
     }
-
 
     return (
       <Box sx={{ width: '100%' , backgroundColor: 'white', inlineSize: '300px', borderRadius: '5px'}} mt={20}>
@@ -82,7 +87,7 @@ function CustomTabPanel(props) {
             <TextField id="email" label="Email" variant="outlined" onInput={e => setLogin({...login, email: e.target.value})}></TextField>
             <TextField id="password" label="Senha" variant="outlined" onInput={e => setLogin({...login, password: e.target.value})}></TextField>
             <Box mt={2}>
-              <Button variant='contained' size='medium' type="submit">Iniciar</Button>
+              <Button variant='contained' size='medium' type="submit" >Iniciar</Button>
             </Box>
           </form>
         </CustomTabPanel>
