@@ -69,7 +69,12 @@ function CustomTabPanel(props) {
         .then((data) => {
           localStorage.setItem("token", JSON.stringify(data.token))
           const userToken = localStorage.getItem("token")
-          redirect(userToken ? '/' : '/login')
+          if(userToken !== "undefined"){
+                redirect(userToken ? '/' : '/login')
+          }
+          else{
+            return null
+          } 
           console.log('teste', data)
       }).catch((err) => console.log('ouve um erro', err))
     }
