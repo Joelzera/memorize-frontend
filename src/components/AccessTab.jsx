@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, Input, InputLabel, OutlinedInput, Tab, Tabs, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, FormControl, Input, InputLabel, OutlinedInput, Stack, Tab, Tabs, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 
@@ -57,26 +57,25 @@ function CustomTabPanel(props) {
 
     const onSubmitLogin = async (event) =>{
       event.preventDefault()
-      console.log('login', login)
 
-      fetch('http://localhost:3000/user/login',{
+      const response = await fetch('http://localhost:3000/user/login',{
         method: 'POST',
         headers:{
           'Content-Type':'application/json',
         },
         body:JSON.stringify(login)
-      }).then((resp) => resp.json())
-        .then((data) => {
-          localStorage.setItem("token", JSON.stringify(data.token))
-          const userToken = localStorage.getItem("token")
-          if(userToken !== "undefined"){
-                redirect(userToken ? '/' : '/login')
-          }
-          else{
-            return null
-          } 
-          console.log('teste', data)
-      }).catch((err) => console.log('ouve um erro', err))
+      })
+      if(response.status === 200) {
+        const data = await response.json()
+        console.log(data)
+        localStorage.setItem("token", data.token)
+        localStorage.setItem("id", data.id)
+        const token = localStorage.getItem("token")
+        const id = localStorage.getItem("id")
+        if( typeof id === "string" && id !== "undefined" && typeof token === "string" && token !== "undefined") redirect("/")
+        return null
+      }
+      else if(response.status !== 200) return alert("usuario invalido")
     }
 
     return (
