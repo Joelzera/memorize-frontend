@@ -1,4 +1,4 @@
-import { Alert, Box, Button, FormControl, Input, InputLabel, OutlinedInput, Stack, Tab, Tabs, TextField, Typography } from "@mui/material";
+import { Box, Button, Tab, Tabs, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 
@@ -32,6 +32,8 @@ function CustomTabPanel(props) {
   export default function AccessTab() {
     const [value, setValue] = useState(3);
     const [login, setLogin] = useState({email:'', senha:''})
+    const [emailError, setEmailError] = useState(false)
+    const [passwordError, setPasswordError] = useState(false)
     const [register, setRegister] = useState({name:'', email:'', password:''})
     const handleChange = (event, newValue) => {
       setValue(newValue);
@@ -65,6 +67,7 @@ function CustomTabPanel(props) {
         },
         body:JSON.stringify(login)
       })
+
       if(response.status === 200) {
         const data = await response.json()
         console.log(data)
@@ -75,7 +78,10 @@ function CustomTabPanel(props) {
         if( typeof id === "string" && id !== "undefined" && typeof token === "string" && token !== "undefined") redirect("/")
         return null
       }
-      else if(response.status !== 200) return alert("usuario invalido")
+      else if(response.status !== 200){
+        setEmailError(true)
+        setPasswordError(true)
+      }
     }
 
     return (
@@ -88,8 +94,8 @@ function CustomTabPanel(props) {
         </Box>
         <CustomTabPanel value={value} index={0}>
           <form onSubmit={onSubmitLogin}>
-            <TextField id="email" label="Email" variant="outlined" onInput={e => setLogin({...login, email: e.target.value})}></TextField>
-            <TextField id="password" label="Senha" variant="outlined" onInput={e => setLogin({...login, password: e.target.value})}></TextField>
+            <TextField id="email" label="Email" variant="outlined" required onInput={e => setLogin({...login, email: e.target.value})} error={emailError}></TextField>
+            <TextField id="password" label="Senha" variant="outlined" required onInput={e => setLogin({...login, password: e.target.value})}error={passwordError}></TextField>
             <Box mt={2}>
               <Button variant='contained' size='medium' type="submit" >Iniciar</Button>
             </Box>
