@@ -1,7 +1,23 @@
+import { Box, Button } from "@mui/material"
+import { Navigate, redirect, useNavigate } from "react-router"
+
+
 const Home = () =>{
+    const navigate = useNavigate()
+    const Remove = () =>{
+        localStorage.removeItem('token')
+        localStorage.removeItem('id')
+    }
+    
+    const LogoutHome = () =>{
+        Remove()
+        navigate('/Login')
+    }
+    
     return(
-        <h1>Pagina principal</h1>,
-        <h2>Voce esta logado</h2>
+       <Box sx={{ flexGrow: 1 }}>
+            <Button variant="contained" onClick={LogoutHome}> sair</Button>
+       </Box>
     )
 }
 
