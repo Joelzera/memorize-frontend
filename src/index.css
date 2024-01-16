@@ -16,6 +16,10 @@ code {
   background-color: rgba(22, 107, 134, 1);
   height: 100vh;
 }
+#code_container_home{
+  background-color: rgba(22, 107, 134, 1); 
+  height: 15vh;
+}
 
 #memorize {
   background-color: #fff;
