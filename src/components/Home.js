@@ -1,24 +1,22 @@
-import { Box, Button } from "@mui/material"
-import { Navigate, redirect, useNavigate } from "react-router"
+import { Avatar, Grid, Typography } from "@mui/material"
 
+import Foto from '../img/joelzera.jpg'
+import ButtonHome from "./ButtonHome"
 
 const Home = () =>{
-    const navigate = useNavigate()
-    const Remove = () =>{
-        localStorage.removeItem('token')
-        localStorage.removeItem('id')
-    }
-    
-    const LogoutHome = () =>{
-        Remove()
-        navigate('/Login')
-    }
-    
-    return(
-       <Box sx={{ flexGrow: 1 }}>
-            <Button variant="contained" onClick={LogoutHome}> sair</Button>
-       </Box>
-    )
+        return(
+            <Grid container id='code_container_home'>
+                <Grid item xs={4} md={12} textAlign='center' marginTop={5}>
+                    <Typography variant='h3' color='white'>Memorize</Typography>
+                </Grid>
+                <Grid marginLeft={10} marginTop={-5}>
+                    <Avatar alt="joel" src={Foto} sx={{ width: 200, height: 200}}/>
+                </Grid>
+                <Grid marginTop={80}>
+                    <ButtonHome/>
+                </Grid>
+            </Grid>
+        )
 }
 
 export default Home
