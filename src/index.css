@@ -14,12 +14,14 @@ code {
 
 #code_container{
   background-color: rgba(22, 107, 134, 1);
-  height: 100vh;
+  min-height: 100vh;
 }
 #code_container_home{
   background-color: rgba(22, 107, 134, 1); 
-  height: 15vh;
+  min-height: 100vh;
+  min-height: 100vb;
 }
+
 
 #memorize {
   background-color: #fff;
