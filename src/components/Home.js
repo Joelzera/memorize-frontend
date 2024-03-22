@@ -1,14 +1,60 @@
-import { Avatar, Box, Button, Card, CardActionArea, CardContent, CardMedia, Divider, Fab, Grid, Input, Typography } from "@mui/material"
-import Foto from '../img/joelzera.jpg'
+import { AppBar, Avatar, Box, Button, Card, CardContent,  Collapse,  Dialog,  DialogActions,  DialogContent,  DialogContentText,  DialogTitle,  Divider,  Grid, IconButton,  ListItemButton, ListItemIcon, ListItemText,  Slide, TextField, Toolbar, Typography } from "@mui/material"
 import ButtonHome from "./ButtonHome"
-import { AccessTime, AddComment, ArrowRightAlt, CheckCircle, Folder, Label, Memory, MenuBook, Person } from "@mui/icons-material"
-import { CreateNewFolder } from "@mui/icons-material"
-import { useState } from "react"
+import {  Add, Close, ExpandLess, ExpandMore, Folder, FolderSharedOutlined, Menu, Token } from "@mui/icons-material"
+import React, { useEffect, useState } from "react"
 import styled from "styled-components"
 
 const Home = () =>{
 
-    const[avatarImage, setAvatarImage] = useState(null)
+    const[openDialog, setOpenDialog] = useState(false)
+
+    const handleClickOpen = () =>{
+        setOpenDialog(true)
+    }
+
+    const handleClose = () => {
+        setOpenDialog(false)
+    }
+
+    const[open, setOpen] = useState(true)
+
+    const handleClick = () => {
+        setOpen(!open)
+    }
+
+
+    const[avatarImage, setAvatarImage] = useState(() =>{
+        const storedImage = localStorage.getItem('avatarImage')
+        return storedImage || null
+    })
+
+    const idProject = localStorage.getItem('id')
+    const tokenBearer = localStorage.getItem('token')
+
+    const [newProject, setNewProject] = useState({ idUser: idProject, name: ''})
+
+    const onSubmitProject = async (event) =>{
+        event.preventDefault()
+        console.log('projeto', newProject)
+
+        fetch('http://localhost:3000/project',{
+            method: 'POST',
+            headers:{
+                'Content-Type':'application/json',
+                'Authorization':`Bearer ${tokenBearer}`
+            },
+            body:JSON.stringify(newProject)
+        }).then((resp) => resp.json())
+          .then((data) =>{
+            console.log(data)
+          }).catch((err) => console.log('deu um erro', err))
+    }
+
+    useEffect(() =>{
+        if(avatarImage){
+            localStorage.setItem('avatarImage', avatarImage)
+        }
+    },[avatarImage])
 
     const handleFileChange = (event) =>{      // lidar com a mudança do arquivo
         const file = event.target.files[0]
@@ -33,88 +79,96 @@ const Home = () =>{
         whiteSpace: 'nowrap',
         width: 1,
       })
-        return(
-            <Grid container id='code_container_home' spacing={1} marginTop={0}>
-                <Grid container item xs={12} md={12}  display='flex' justifyContent='center' >
-                    <Typography variant='h3' color='white'>Memorize</Typography>
-                </Grid>
-                <Grid container item sx={12} md={2} display='flex' justifyContent='center' >
-                    <Grid>
-                        <Card sx={{ maxHeight : 750, height: '100%', backgroundColor: '#1f1f1f' }}>
-                            <Box margin={2}>
-                                <Avatar src={avatarImage} sx={{ width: 250, height: 250 }}></Avatar>
-                                <Button component="label" variant="outlined" onChange={handleFileChange}>
-                                    Editar
-                                    <VisuallyHiddenInput type="file"/>
-                                </Button>
-                            </Box>
+
+        return(          
+            <>
+                <Box sx={{ flexGrow: 1 }}>
+                    <AppBar position="static" color="inherit">
+                        <Toolbar>
+                            <IconButton size="large" color="inherit"><Menu/></IconButton>
+                            <Typography variant="h5" sx={{ flexGrow: 20 }}>Memorize</Typography>
+                            <ButtonHome/>
+                        </Toolbar>
+                    </AppBar>
+                </Box>
+                <Grid container id='code_container_home' >               
+                    <Grid item md={2}>
+                        <Card sx={{ height: '100%', width: '100%', borderRadius: 0, backgroundColor: '#1a1a1a' }}>
                             <CardContent>
-                                <Typography fontSize={14} color='white'>Membro Memorize</Typography>
-                                <Person color="primary"/>
-                                <Typography variant="h5" color='white'>Joel Bispo</Typography>
-                                <Typography fontSize={14} color='white'>Bem vindo ao seu espaço de estudos!</Typography>
-                                    <Card sx={{ backgroundColor: '#1a1a1a', marginTop: '16px' }}>
-                                        <Typography variant="h5" color='white'>FlashCard</Typography>
-                                    </Card>
-                                    <Box marginTop={25}>
-                                        <ButtonHome/>
-                                    </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <Avatar sx={{ backgroundColor: '#166b86'}}>J</Avatar>
+                                    <Typography variant="h5" color='white' margin='8px'>Joel Bispo</Typography> 
+                                </Box>                          
+                                <Avatar src={avatarImage} 
+                                sx={{ 
+                                    marginLeft: 2 ,
+                                    marginTop: 2,
+                                    width : { xs: 120, sm: 150, md: 200 },
+                                    height: { xs: 120, sm: 150, md: 200 }
+                                }}/>          
+                                <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '25px' }}>
+                                    <Button component="label" variant="outlined" onChange={handleFileChange}>
+                                        Editar
+                                        <VisuallyHiddenInput type="file"/>
+                                    </Button>
+                                </Box>   
                             </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
-                <Grid container item sx={12} md={6} display='flex' justifyContent='center' >
-                    <Grid>
-                        <Card sx={{ maxHeight : 750, height: '100%', maxWidth: '100%', backgroundColor: '#1f1f1f' }}>
-                            <CardContent>
-                                <Typography variant="h3" color='white'>Sobre</Typography>
-                                <Divider variant="fullWidth" sx={{ marginBottom: '16px', marginTop: '16px', backgroundColor: '#166b86', height: 2 }}/>
-                                <Typography color='white'>Memorize é uma plataforma de estudos que permite voce usuario desenvolver sua capacidade de armazenamento
-                                    sobre qualquer assunto. Com base nos estudos sobre a curva do esquecimento e a tecnica de repetição espaçada, nós 
-                                    da equipe Memorize desenvolvemos essa ferramenta
-                                </Typography>
-                                <Typography variant="h3" color='white' marginTop={5}>O que é Tecnica de Repetição Espaçada?</Typography>
-                                <Divider variant="fullWidth" sx={{ marginBottom: '16px', marginTop: '16px', backgroundColor: '#166b86', height: 2 }}/>
-                                <Typography color='white'>O sistema de repetição espaçada, 
-                                é um método de estudo que diz que um conteúdo precisa ser 
-                                revisado com uma certa frequência para que as informações 
-                                não sejam esquecidas.
-                                Ele se baseia na curva do esquecimento e em estudos, 
-                                que dizem que existem momentos ideais para revisar informações. 
-                                Não tão cedo para não perder tempo, e nem tão tarde para não precisar reaprender.</Typography>
-                                <Box marginTop={10} display='flex' justifyContent='center'>
-                                    <MenuBook sx={{ width: 100, height: 100 }}/>
-                                    <ArrowRightAlt sx={{ width: 100, height: 100 }}/>
-                                    <Memory sx={{ width: 100, height: 100 }}/>
-                                    <ArrowRightAlt sx={{ width: 100, height: 100 }}/>
-                                    <AccessTime sx={{ width: 100, height: 100 }}/>
-                                    <ArrowRightAlt sx={{ width: 100, height: 100 }}/>
-                                    <MenuBook sx={{ width: 100, height: 100 }}/>
-                                </Box>
-                            </CardContent> 
-                        </Card>
-                    </Grid>
-                </Grid>
-                <Grid container item sx={12} md={4} display='flex' justifyContent='center'>
-                    <Grid>
-                        <Card sx={{ maxHeight : 750, height: '100%', width: '100%', backgroundColor: '#1f1f1f' }}>
-                            <CardContent>
-                                <Typography variant="h3" color='white' textAlign='center'>Novo Projeto</Typography>
-                                <Divider variant="fullWidth" sx={{ marginBottom: '16px', marginTop: '16px', backgroundColor: '#166b86', height: 2 }}/>                        
-                                <Typography variant="h5" color='white' textAlign='center' margin='16px'>Clique no card abaixo</Typography>
-                                <Typography color='white' textAlign='center'>Aqui voce pode dar inicio aos seus estudos sobre qualquer assunto</Typography>
-                                    <Card sx={{ backgroundColor: '#1a1a1a', margin: '10px' }}>
-                                        <Box margin={30} display='flex' justifyContent='center'>
-                                            <Fab  aria-label="add">
-                                                <CreateNewFolder/>
-                                            </Fab>
-                                        </Box>
-                                    </Card>
+                            <Divider variant="fullWidth" sx={{ marginTop: '10px', backgroundColor: '#2a2a2a', height: 2 }}/>
+                            <CardContent>                           
+                                <ListItemButton sx={{ backgroundColor : '#2a2a2a' }} onClick={handleClickOpen}>
+                                    <ListItemIcon>
+                                        <Add sx={{ color: '#fff' }}/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Criar novo projeto" sx={{ color: '#fff' }}/>
+                                </ListItemButton>
+                                <Dialog
+                                    fullWidth
+                                    open={openDialog}
+                                    onClose={handleClose}                                   
+                                >
+                                <form onSubmit={onSubmitProject}>
+                                <DialogTitle variant="h5">Novo projeto</DialogTitle>
+                                <DialogContent>
+                                    <DialogContentText>
+                                        Bem vindo ao Memorize, aqui voce pode iniciar seus estudos sobre qualquer assunto
+                                        criando um projeto para armazenar pastas e anotações
+                                    </DialogContentText>
+                                    <TextField id= 'name' 
+                                               label="Nome do Projeto" 
+                                               required 
+                                               fullWidth 
+                                               variant="standard" 
+                                               sx={{ marginTop: 2}}
+                                               onInput={e => setNewProject({...newProject, name: e.target.value })}/>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={handleClose}>Cancelar</Button>
+                                    <Button onClick={handleClose} type="submit">Salvar</Button>
+                                </DialogActions>  
+                                </form>                           
+                                </Dialog>                                                                                                  
                             </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
-            </Grid>
+                            <Divider variant="fullWidth" sx={{ marginTop: '10px', backgroundColor: '#2a2a2a', height: 2 }}/>
+                            <CardContent>
+                                    <Box>
+                                    <ListItemButton onClick={handleClick}>
+                                        <ListItemIcon>
+                                            <FolderSharedOutlined sx={{ color: '#fff', width: 30, height: 30 }}/>
+                                        </ListItemIcon>
+                                        <ListItemText primary="Projetos" sx={{ color: '#fff' }}/>
+                                        { open ? <ExpandLess sx={{ color: '#fff' }}/> : <ExpandMore sx={{ color: '#fff' }}/>}
+                                    </ListItemButton>
+                                    <Collapse in={open} timeout='auto' unmountOnExit>
+                                        <ListItemButton sx={{ pl: 9 }}>
+                                            <Typography color='white'>Meus projetos</Typography>
+                                        </ListItemButton>
+                                    </Collapse>
+                                    </Box>                              
+                            </CardContent>                     
+                        </Card>                                                             
+                    </Grid>                   
+                </Grid>                
+            </>
         )
 }
 
