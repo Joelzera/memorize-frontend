@@ -16,7 +16,7 @@ const ButtonHome = () =>{
     
     return(
        <Box sx={{ flexGrow: 1 }}>
-            <Button variant="outlined" size="large" onClick={LogoutHome}> sair</Button>
+            <Button variant="outlined" size="medium" onClick={LogoutHome}> sair</Button>
        </Box>
     )
 }
